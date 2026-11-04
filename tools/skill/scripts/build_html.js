@@ -73,6 +73,40 @@ function buildHtml(data, options = {}) {
     ? `由 <code>workspace-scanner</code> v7 生成 · 分享版静态快照 · 不依赖本机 DB / helper / localhost`
     : `由 <code>workspace-scanner</code> v7 生成 · Explorer 打开通过隐藏 iframe 触发本地 helper：<code>node open_folder_server.js</code> · 复制路径可作为兜底`;
 
+  // 静态预渲染：无 JS 环境（如门户 sandbox iframe 禁脚本）也能看到完整表格。
+  // 有 JS 时 renderHead()/renderBody() 会覆盖这里的内容，交互版不受影响。
+  const STATIC_COLS = [
+    { key: 'category', label: '状态' },
+    { key: 'name', label: '名称' },
+    { key: 'description', label: '描述' },
+    { key: 'artifact', label: '主要产物' },
+    { key: 'progress', label: '当前进展' },
+    { key: 'path', label: '路径' },
+    { key: 'lastOpened', label: '最近打开' },
+    { key: 'dailyCount', label: 'daily 数' },
+  ];
+  const STATIC_CATEGORY = { inUse: '使用中', historical: '历史项目', raw: '裸目录' };
+  function staticCell(row, key) {
+    const m = row.memory || {};
+    if (key === 'category') return `<span class="badge badge-${esc(row.category)}">${esc(STATIC_CATEGORY[row.category] || row.category || '—')}</span>`;
+    if (key === 'name') return `<span class="name">${esc(row.name)}</span>`;
+    if (key === 'description') return `<div class="desc">${esc(row.description || '待补充工作内容描述')}</div>`;
+    if (key === 'artifact') {
+      const a = row.artifact || { type: 'directory', label: '工作目录', path: row.path };
+      const target = a.path || row.path;
+      return `<div class="artifact"><div class="muted">${esc(a.label || '工作目录')}</div><div class="path">${esc(target)}</div></div>`;
+    }
+    if (key === 'progress') return `<div class="progress">${esc(row.progress || '暂无进展记录')}</div>`;
+    if (key === 'path') return `<div class="path">${esc(row.path)}</div>`;
+    if (key === 'lastOpened') return esc(fmtDate(row.lastOpenedISO));
+    if (key === 'dailyCount') return String(m.dailyCount || 0);
+    return '';
+  }
+  const staticHeadHtml = STATIC_COLS.map(c => `<th>${c.label}</th>`).join('');
+  const staticBodyHtml = data.spaces.map(row =>
+    `<tr>${STATIC_COLS.map(c => `<td>${staticCell(row, c.key)}</td>`).join('')}</tr>`,
+  ).join('\n');
+
   return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -205,8 +239,8 @@ tbody tr:hover { background: rgba(88,166,255,0.06); }
   ${helperPanel}
   <div class="table-wrap">
     <table>
-      <thead><tr id="tableHead"></tr></thead>
-      <tbody id="tableBody"></tbody>
+      <thead><tr id="tableHead">${staticHeadHtml}</tr></thead>
+      <tbody id="tableBody">${staticBodyHtml}</tbody>
     </table>
   </div>
 
