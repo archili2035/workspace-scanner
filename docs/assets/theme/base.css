@@ -1,0 +1,628 @@
+/*!
+ * xavierstudio-site-kit · base
+ * 二层：重置、排版与组件原语。只引用 tokens.css，不出现任何写死色值。
+ *
+ * 组件词汇沿用 Health 仓库已有的一套（page/hero/section/card/stat/row/pill/
+ * button/links/warn/muted/note/alert/lead/tag），它是现存三套页面里最系统的，
+ * 因此被收为规范词汇 —— 这样既有页面换肤接近零改动。
+ *
+ * 依赖：本文件必须在 tokens.css 之后加载。
+ */
+
+/* ===== 重置 ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body-lh);
+  font-weight: var(--weight-normal);
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 组件一旦显式声明 display，就会压过 [hidden] 的 UA 样式。
+   这是反复踩的坑，在重置里一次性兜住。 */
+[hidden] {
+  display: none !important;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--ink-on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ===== 排版 ============================================================
+ * 标题用衬线保留个人气质，字号与字距按苹果的「越大越紧」处理。
+ */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-bold);
+  /* 继承而非写死：容器一旦设置 color（深色色带、第三方页面的彩色 hero），
+     标题要跟着走。写死 var(--ink) 会把这些容器的文字压成深色，是踩过的坑。
+     body 已设 var(--ink)，默认效果不变。 */
+  color: inherit;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-h1);
+  line-height: var(--text-h1-lh);
+  letter-spacing: var(--text-h1-ls);
+}
+
+h2 {
+  font-size: var(--text-h2);
+  line-height: var(--text-h2-lh);
+  letter-spacing: var(--text-h2-ls);
+}
+
+h3 {
+  font-size: var(--text-h3);
+  line-height: var(--text-h3-lh);
+  letter-spacing: var(--text-h3-ls);
+}
+
+h4 {
+  font-size: var(--text-h4);
+  line-height: var(--text-h4-lh);
+  letter-spacing: var(--text-h4-ls);
+}
+
+p {
+  max-width: var(--width-reading);
+}
+
+/* ---- 纵向节奏 --------------------------------------------------------
+ * 重置清掉了所有 margin，这里统一补回来，避免每个页面各自手调。
+ * 规则按「后者相对前者」表达，顺序由宽到窄，后面的更具体者覆盖前面的。
+ */
+h1 + *,
+h2 + *,
+h3 + *,
+h4 + * {
+  margin-top: var(--space-4);
+}
+
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p {
+  margin-top: var(--space-3);
+}
+
+p + p,
+p + ul,
+p + ol,
+ul + p,
+ol + p,
+blockquote + p {
+  margin-top: var(--space-4);
+}
+
+* + table,
+* + pre,
+* + blockquote,
+* + .grid,
+* + .stats,
+* + .timeline,
+* + .links,
+* + .alert,
+* + .warn,
+* + .swatches {
+  margin-top: var(--space-5);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--duration) var(--ease);
+}
+
+a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+strong,
+b {
+  font-weight: var(--weight-bold);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface-alt);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  line-height: 1.6;
+  background: var(--surface-inverse);
+  color: var(--ink-on-inverse);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  overflow: auto;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+blockquote {
+  border-left: 2px solid var(--accent-line);
+  padding-left: var(--space-4);
+  color: var(--ink-secondary);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--hairline);
+  margin: var(--space-7) 0;
+}
+
+ul,
+ol {
+  padding-left: 1.3em;
+  max-width: var(--width-reading);
+}
+
+li + li {
+  margin-top: var(--space-1);
+}
+
+/* ===== 版面骨架 ========================================================
+ * .page       内容容器，居中限宽
+ * .band       整幅色带，承担纵向节奏；.band-alt 换表面色做交替
+ */
+.page {
+  width: 100%;
+  max-width: var(--width-content);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+.page-wide {
+  max-width: var(--width-wide);
+}
+
+.page-reading {
+  max-width: var(--width-reading);
+}
+
+.band {
+  padding: var(--space-9) 0;
+}
+
+.band-alt {
+  background: var(--surface-alt);
+}
+
+/* 标题继承 color，因此这里设一次即可，不必再逐级覆盖 */
+.band-inverse {
+  background: var(--surface-inverse);
+  color: var(--ink-on-inverse);
+}
+
+.band-tight {
+  padding: var(--space-7) 0;
+}
+
+/* ===== 首屏 ============================================================
+ * 苹果的 hero 不是卡片，是大标题 + 留白。这里去掉原有的卡片外观。
+ */
+.hero {
+  padding: var(--space-9) 0 var(--space-8);
+}
+
+/* 色带已经提供纵向节奏，首个 hero 不再重复撑高 */
+.band > .page > .hero:first-child,
+.band > .page-wide > .hero:first-child,
+.band > .page-reading > .hero:first-child {
+  padding-top: 0;
+}
+
+.hero h1 {
+  font-size: var(--text-display);
+  line-height: var(--text-display-lh);
+  letter-spacing: var(--text-display-ls);
+  margin-top: var(--space-4);
+}
+
+.lead {
+  font-size: var(--text-h4);
+  line-height: 1.5;
+  color: var(--ink-secondary);
+  margin-top: var(--space-4);
+  max-width: var(--width-reading);
+}
+
+/* 小标签：hero 上方的类别提示 */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--text-micro-ls);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ===== 分节 ============================================================
+ * 默认不是卡片，靠间距与标题分区（苹果的做法）。
+ * 需要卡片外观时另加 .card。
+ */
+.section {
+  margin-top: var(--space-8);
+}
+
+/* ===== 卡片与网格 ====================================================== */
+.card {
+  display: block;
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow var(--duration) var(--ease),
+    transform var(--duration) var(--ease);
+}
+
+a.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+a.card:hover strong {
+  color: var(--accent);
+}
+
+.card strong {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: var(--text-h4);
+  color: var(--ink);
+  transition: color var(--duration) var(--ease);
+}
+
+.card span {
+  color: var(--ink-secondary);
+  font-size: var(--text-small);
+  line-height: var(--text-small-lh);
+}
+
+.card strong + span {
+  display: block;
+  margin-top: var(--space-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+/* ===== 数字指标 ======================================================== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.stat {
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat span {
+  display: block;
+  font-size: var(--text-micro);
+  letter-spacing: var(--text-micro-ls);
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+  font-family: var(--font-mono);
+}
+
+.stat strong {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: var(--font-serif);
+  font-size: var(--text-h2);
+  line-height: 1.1;
+  letter-spacing: var(--text-h2-ls);
+}
+
+/* ===== 时间线行 ======================================================== */
+.timeline {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 112px 1fr auto;
+  gap: var(--space-4);
+  align-items: center;
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.row > div:nth-child(2) {
+  font-size: var(--text-small);
+  line-height: var(--text-small-lh);
+}
+
+.date {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  color: var(--ink-secondary);
+}
+
+/* ===== 状态药丸 ========================================================
+ * red / amber / green / blue / purple 是既有页面在用的名字，保留为别名，
+ * 实际取语义令牌，不再出现写死色值。
+ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  font-size: var(--text-micro);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  background: var(--surface-alt);
+  color: var(--ink-secondary);
+}
+
+.pill.red,
+.pill.danger {
+  background: var(--danger-wash);
+  color: var(--danger);
+}
+
+.pill.amber,
+.pill.warn {
+  background: var(--warn-wash);
+  color: var(--warn);
+}
+
+.pill.green,
+.pill.ok {
+  background: var(--ok-wash);
+  color: var(--ok);
+}
+
+.pill.blue,
+.pill.info {
+  background: var(--info-wash);
+  color: var(--info);
+}
+
+.pill.purple,
+.pill.accent {
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+
+/* ===== 按钮与链接组 ====================================================
+ * 药丸形，苹果式。.button 实心强调色，.button-quiet 低调描边。
+ */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-pill);
+  padding: 8px 18px;
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  font-family: var(--font-sans);
+  background: var(--accent);
+  color: var(--ink-on-accent);
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--duration) var(--ease);
+}
+
+.button:hover {
+  background: var(--accent-hover);
+  color: var(--ink-on-accent);
+  text-decoration: none;
+}
+
+.button-quiet {
+  background: transparent;
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent-line);
+}
+
+.button-quiet:hover {
+  background: var(--accent-wash);
+  color: var(--accent-hover);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.links a {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  padding: 7px 16px;
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  background: var(--surface-alt);
+  color: var(--accent);
+}
+
+.links a:hover {
+  background: var(--accent-wash);
+  text-decoration: none;
+}
+
+/* ===== 表格 ============================================================ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+th,
+td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--hairline);
+}
+
+th {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--text-micro-ls);
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+  font-weight: var(--weight-medium);
+  background: var(--surface-alt);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== 提示块 ========================================================== */
+.alert {
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-sm);
+  margin-top: var(--space-3);
+}
+
+.alert h4 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.alert p {
+  font-size: var(--text-small);
+  line-height: var(--text-small-lh);
+  margin-top: var(--space-1);
+}
+
+.alert .meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--ink-tertiary);
+}
+
+/* 免责声明 / 风险提示：低调但不可忽略 */
+.warn {
+  background: var(--warn-wash);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  color: var(--warn);
+  font-size: var(--text-small);
+  line-height: var(--text-small-lh);
+}
+
+.warn strong {
+  color: var(--warn);
+}
+
+/* ===== 文字辅助 ======================================================== */
+.muted {
+  color: var(--ink-tertiary);
+}
+
+.note {
+  color: var(--ink-tertiary);
+  font-size: var(--text-small);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.micro {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--text-micro-ls);
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+/* ===== 窄屏 ============================================================ */
+@media (max-width: 734px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .hero {
+    padding: var(--space-7) 0 var(--space-6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto;
+  }
+}

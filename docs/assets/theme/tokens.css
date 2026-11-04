@@ -1,0 +1,141 @@
+/*!
+ * xavierstudio-site-kit · tokens
+ * 一层：设计令牌。唯一真相源。
+ *
+ * 风格口径：苹果官网的骨架（排版节奏、留白、双表面色带、药丸按钮）
+ *          + 保留个人色（赭石强调色、衬线标题）
+ *
+ * 硬性约束：任何页面、任何组件都不准写死色值与字号，只引用这里的变量。
+ *          新增语义色请先加令牌，再在组件里引用。
+ */
+:root {
+  /* ---- 表面 ---------------------------------------------------------- */
+  /* 苹果用纯白 / #f5f5f7 两级表面做色带交替，这里整体偏暖一度保留个人气质 */
+  --surface: #fdfcfa;
+  --surface-alt: #f4f2ed;
+  --surface-raised: #ffffff;
+  --surface-inverse: #1c1b18;
+
+  /* ---- 文字 ---------------------------------------------------------- */
+  --ink: #1c1b18;
+  --ink-secondary: #605d56;
+  --ink-tertiary: #8a867d;
+  --ink-on-inverse: #f4f2ed;
+  --ink-on-accent: #ffffff;
+
+  /* ---- 强调色与语义色 ------------------------------------------------ */
+  --accent: #9c3d2e;
+  --accent-hover: #7f2f22;
+  --accent-wash: #f6ebe8;
+  --accent-line: #d9b3aa;
+
+  --ok: #4f6b45;
+  --ok-wash: #eef3e9;
+  --warn: #9a6a1c;
+  --warn-wash: #faf1de;
+  --danger: #a33226;
+  --danger-wash: #fbebe9;
+  --info: #3f5a73;
+  --info-wash: #ecf1f6;
+
+  /* ---- 分隔 ---------------------------------------------------------- */
+  /* 苹果几乎不用边框，靠表面层级分区；发丝线只在表格与必要处出现 */
+  --hairline: #e4e0d7;
+  --hairline-strong: #cdc7ba;
+
+  /* ---- 字体 ---------------------------------------------------------- */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-serif:
+    "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", Georgia, serif;
+  --font-mono:
+    ui-monospace, "SF Mono", "JetBrains Mono", "IBM Plex Mono", Consolas, monospace;
+
+  /* ---- 字阶 ----------------------------------------------------------
+   * 苹果的做法：字号越大，字距收得越紧。每一级字号都配一组行高与字距。
+   */
+  --text-display: 64px;
+  --text-display-lh: 1.06;
+  --text-display-ls: -0.015em;
+
+  --text-h1: 44px;
+  --text-h1-lh: 1.1;
+  --text-h1-ls: -0.009em;
+
+  --text-h2: 30px;
+  --text-h2-lh: 1.2;
+  --text-h2-ls: -0.005em;
+
+  --text-h3: 22px;
+  --text-h3-lh: 1.3;
+  --text-h3-ls: -0.003em;
+
+  --text-h4: 18px;
+  --text-h4-lh: 1.4;
+  --text-h4-ls: 0;
+
+  --text-body: 17px;
+  --text-body-lh: 1.47;
+
+  --text-small: 14px;
+  --text-small-lh: 1.55;
+
+  --text-micro: 12px;
+  --text-micro-lh: 1.5;
+  --text-micro-ls: 0.04em;
+
+  /* ---- 字重 ---------------------------------------------------------- */
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-bold: 600;
+
+  /* ---- 间距（4 的倍数） ---------------------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* ---- 版面宽度 ------------------------------------------------------
+   * 980px 是苹果的内容宽；阅读密集的长文收到 692px 以控制每行字数。
+   */
+  --width-wide: 1180px;
+  --width-content: 980px;
+  --width-reading: 692px;
+
+  /* ---- 圆角 ---------------------------------------------------------- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+  --radius-pill: 980px;
+
+  /* ---- 阴影 ----------------------------------------------------------
+   * 克制使用。层级优先用表面色差表达，阴影只给浮起元素。
+   */
+  --shadow-sm: 0 1px 2px rgba(28, 27, 24, 0.04);
+  --shadow-md: 0 4px 16px rgba(28, 27, 24, 0.06);
+
+  /* ---- 动效 ---------------------------------------------------------- */
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --duration: 0.22s;
+}
+
+/* 窄屏收字号与纵向节奏，令牌一处改、全站生效 */
+@media (max-width: 734px) {
+  :root {
+    --text-display: 40px;
+    --text-h1: 32px;
+    --text-h2: 24px;
+    --text-h3: 19px;
+    --text-body: 16px;
+    --space-9: 56px;
+    --space-10: 72px;
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "title": "Workspace Scanner",
+  "summary": "WorkBuddy 多工作空间扫描与可视化清单：sqlite 注册表 + memory 活跃度双源判定，生成可交互 HTML 仪表盘",
+  "visibility": "public",
+  "site": "docs",
+  "entry": "workspaces_index.html",
+  "include": [
+    "docs/**"
+  ],
+  "exclude": [
+    "tools/**",
+    "scripts/**"
+  ],
+  "theme_version": "0.2.0",
+  "theme_dir": "docs/assets/theme"
+}

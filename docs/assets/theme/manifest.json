@@ -1,0 +1,13 @@
+{
+  "name": "xavierstudio-site-kit-theme",
+  "version": "0.2.0",
+  "files": [
+    "tokens.css",
+    "base.css"
+  ],
+  "order": [
+    "tokens.css",
+    "base.css"
+  ],
+  "note": "tokens.css 必须先于 base.css 加载。各仓库通过 scripts/sync-theme.mjs 同步，版本号写入 portal.json 的 theme_version。"
+}
