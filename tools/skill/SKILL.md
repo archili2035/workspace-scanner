@@ -129,6 +129,24 @@ node "C:/Users/archili/.workbuddy/skills/workspace-scanner/scripts/build_html.js
 
 分享版是单文件静态快照，隐藏 Explorer/helper/file 本机操作入口，只保留表格、筛选、排序、路径文本和产物信息，适合直接发送给其他人浏览。
 
+### Step 3.5 — 同步到部署仓库（GitHub Pages）
+
+扫描生成的 HTML 是静态快照，线上站点不会自己更新；**每次成功生成全局 HTML 后，必须把快照同步进部署仓库并推送**，否则 https://archili2035.github.io/workspace-scanner/ 会一直停留在旧数据。
+
+```bash
+cd "E:/WorkBuddyRepo/workspace-scanner"
+cp "C:/Users/archili/.workbuddy/memory/workspaces.html" "docs/workspaces_index.html"
+git add docs/workspaces_index.html
+git diff --cached --quiet || git commit -m "sync: 更新仪表盘快照 $(date +%F)"
+git push
+```
+
+要点：
+- 部署仓库固定为 `E:/WorkBuddyRepo/workspace-scanner`（archili2035/workspace-scanner，Pages 从 `/docs` 发布）
+- `git diff --cached --quiet` 保证数据没变化时不产生空提交；push 失败（断网/凭据过期）不阻塞扫描主流程，报告用户即可
+- 若本次同时改了 skill 本体（SKILL.md/scripts），把 `~/.workbuddy/skills/workspace-scanner/` 下对应文件同步进仓库的 `tools/skill/` 后一并提交
+- 部署仓库结构由 xavierstudio-site-kit 规范维护（portal.json + docs/ + theme），不要手改 theme 文件
+
 ### Step 4 — 启动 Explorer helper（需要目录/文件定位时）
 
 ```bash
