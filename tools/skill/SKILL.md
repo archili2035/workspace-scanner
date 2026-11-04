@@ -116,7 +116,11 @@ HTML 是单文件、内联 CSS/JS、暗色主题、**交互表格视图**，包�
 cp "C:/Users/archili/.workbuddy/memory/workspaces.html" "<当前工作空间>/workspaces.html"
 ```
 
-当前工作空间路径以会话上下文/实际 cwd 为准，不要写死；本 skill 自己维护时通常是 `E:/WorkBuddyRepo/WorkbuddySpaceManager/workspaces.html`。
+当前工作空间路径以会话上下文/实际 cwd 为准，不要写死。
+
+**分组口径（2026-11-04 起）**：用户在客户端把 `workspace-scanner`（主要）与 `WorkbuddySpaceManager` 归为一个分组。因此：
+- 若当前空间是 `E:/WorkBuddyRepo/workspace-scanner`（部署仓库），直接把 HTML 复制到 `docs/workspaces_index.html`——这一步同时完成浏览副本与部署目标，Step 3.5 的 cp 可跳过（git add/commit/push 照做）
+- `WorkbuddySpaceManager` 根目录的平铺副本 `workspaces.html` 是历史浏览习惯，若该空间仍被使用则保留复制；否则可不再复制
 
 如果用户需要发给别人看，再生成一份分享版到当前工作空间根目录：
 
@@ -143,6 +147,7 @@ git push
 
 要点：
 - 部署仓库固定为 `E:/WorkBuddyRepo/workspace-scanner`（archili2035/workspace-scanner，Pages 从 `/docs` 发布）
+- 若 Step 3 已把 HTML 复制到 `docs/workspaces_index.html`（当前空间就是部署仓库时），此处 cp 跳过，直接从 git add 开始
 - `git diff --cached --quiet` 保证数据没变化时不产生空提交；push 失败（断网/凭据过期）不阻塞扫描主流程，报告用户即可
 - 若本次同时改了 skill 本体（SKILL.md/scripts），把 `~/.workbuddy/skills/workspace-scanner/` 下对应文件同步进仓库的 `tools/skill/` 后一并提交
 - 部署仓库结构由 xavierstudio-site-kit 规范维护（portal.json + docs/ + theme），不要手改 theme 文件
