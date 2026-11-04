@@ -4,6 +4,7 @@
   "category": "个人工具",
   "origin": "hybrid",
   "visibility": "private",
+  "scripts": "allow",
   "site": "docs",
   "entry": "workspaces_index.html",
   "include": [
